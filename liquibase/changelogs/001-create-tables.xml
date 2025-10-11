@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <!-- USERS TABLE -->
+    <changeSet id="1" author="perpetual">
+        <createTable tableName="users">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(20)"/>
+            <column name="email" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ROUNDS TABLE -->
+    <changeSet id="2" author="perpetual">
+        <createTable tableName="rounds">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="crash_point" type="FLOAT"/>
+            <column name="state" type="VARCHAR(50)"/>
+            <column name="start_time" type="TIMESTAMP"/>
+            <column name="end_time" type="TIMESTAMP"/>
+            <column name="server_seed" type="VARCHAR(255)"/>
+            <column name="client_seed" type="VARCHAR(255)"/>
+            <column name="total_bets" type="INT"/>
+            <column name="total_payout" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ACCOUNT TABLE -->
+    <changeSet id="3" author="perpetual">
+        <createTable tableName="account">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_account_user"
+                             referencedTableName="users" referencedColumnNames="id"/>
+            </column>
+            <column name="account_ref" type="VARCHAR(100)"/>
+            <column name="balance" type="DECIMAL(12,2)" defaultValueNumeric="0.00"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- BETS TABLE -->
+    <changeSet id="4" author="perpetual">
+        <createTable tableName="bets">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bet_user"
+                             referencedTableName="users" referencedColumnNames="id"/>
+            </column>
+            <column name="round_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_bet_round"
+                             referencedTableName="rounds" referencedColumnNames="id"/>
+            </column>
+            <column name="amount" type="DECIMAL(10,2)"/>
+            <column name="auto_cashout" type="DECIMAL(10,2)"/>
+            <column name="cashout_multiplier" type="INT"/>
+            <column name="win_amount" type="DECIMAL(10,2)"/>
+            <column name="status" type="VARCHAR(20)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="cashed_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- TRANSACTIONS TABLE -->
+    <changeSet id="5" author="perpetual">
+        <createTable tableName="transactions">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="account_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_tx_account"
+                             referencedTableName="account" referencedColumnNames="id"/>
+            </column>
+            <column name="round_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_tx_round"
+                             referencedTableName="rounds" referencedColumnNames="id"/>
+            </column>
+            <column name="type" type="VARCHAR(50)"/>
+            <column name="amount" type="DECIMAL(10,2)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

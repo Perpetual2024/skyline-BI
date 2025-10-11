@@ -1,0 +1,9 @@
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send("Welcome , your server is succesfully running")
+});
+app.listen(3000, () => {
+    console.log("Hey there server")
+});
