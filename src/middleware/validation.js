@@ -55,7 +55,7 @@ const validateCreateUser = [
 // Validation rules for updating a user
 const validateUpdateUser = [
   param('id')
-    .isUUID({ min: 1 }).withMessage('Invalid user ID'),
+    .isUUID('4').withMessage('Invalid user ID'),
   
   body('username')
     .optional()
@@ -88,7 +88,7 @@ const validateUpdateUser = [
 // Validation for user ID parameter
 const validateUserId = [
   param('id')
-    .isInt({ min: 1 }).withMessage('Invalid user ID'),
+    .isUUID(4).withMessage('Invalid user ID'),
   
   validate
 ];
