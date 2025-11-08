@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const bcrypt = require('bcrypt');
 
 const User = sequelize.define('User', {
   id: {
@@ -8,30 +9,44 @@ const User = sequelize.define('User', {
     primaryKey: true,
   },
   username: {
-    type: DataTypes.STRING, // ✅ correct
+    type: DataTypes.STRING, 
     unique: true,
     allowNull: false,
   },
   phone: {
-    type: DataTypes.STRING, // ✅ correct
+    type: DataTypes.STRING, 
     unique: true,
     allowNull: false,
   },
   email: {
-    type: DataTypes.STRING, // ✅ email is just a string in Sequelize
+    type: DataTypes.STRING, 
     unique: true,
     allowNull: false,
     validate: {
-      isEmail: true, // ✅ built-in email validator
+      isEmail: true, 
     },
   },
   password: {
-    type: DataTypes.STRING, // ✅ correct
+    type: DataTypes.STRING, 
     allowNull: false,
   },
 }, {
-  timestamps: true, // ✅ automatically adds createdAt & updatedAt
-  tableName: 'users', // optional: make sure it matches your DB table
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at'
+});
+
+User.beforeCreate(async (user) => {
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
+});
+
+// ✅ Hash password if it's updated
+User.beforeUpdate(async (user) => {
+  if (user.changed('password')) {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+  }
 });
 
 module.exports = User;
