@@ -1,8 +1,15 @@
 const Bet = require('../model/bets');
+const User = require('../model/user');
 
 // CREATE
 exports.createBet = async (req, res) => {
   try {
+    console.log(req)
+    const user = User.findByPk(req.user_id);
+    console.log(user)
+    if(user){
+      req.user_id = user.id
+    }
     const bet = await Bet.create(req.body);
     res.status(201).json(bet);
   } catch (error) {
